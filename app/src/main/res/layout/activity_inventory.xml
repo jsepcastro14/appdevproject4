@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Inventory">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="71dp"
+        android:background="@color/black"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="244dp"
+            android:layout_height="39dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="INVENTORY"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/refreshbtn"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginLeft="300dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/refreshbtn"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Home"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            />
+
+        <ImageButton
+            android:id="@+id/returnbtn"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginLeft="350dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/returnbtn"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Home"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="348dp"
+        android:layout_marginTop="20dp">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+</LinearLayout>

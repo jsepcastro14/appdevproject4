@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Settings">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="CropCart Market"
+            android:textSize="31dp"
+            android:textStyle="bold"
+            android:gravity="bottom"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            />
+
+        <ImageButton
+            android:id="@+id/returnbtn"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginLeft="350dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/returnbtn"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Home"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            />
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:cardCornerRadius="10dp"
+        android:elevation="15dp"
+        android:layout_margin="30dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="140dp"
+                android:layout_height="130dp"
+                android:src="@drawable/sampleavatar"
+                android:scaleType="fitXY"/>
+
+            <TextView
+                android:id="@+id/firstname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="150dp"
+                android:layout_marginTop="10dp"
+                android:text="Philstrong"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginLeft="150dp"
+                android:layout_marginTop="40dp"
+                android:text="Pizzaras"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginLeft="150dp"
+                android:layout_marginTop="70dp"
+                android:text="philstrong@gmail"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginLeft="150dp"
+                android:layout_marginTop="100dp"
+                android:text="67676767676767"
+                android:textSize="20dp" />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        app:cardCornerRadius="10dp"
+        android:elevation="15dp"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/btn_inventory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:text="Inventory" />
+
+
+
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        app:cardCornerRadius="10dp"
+        android:elevation="15dp"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/tvGoToFarmerDashboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Dashboard"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        app:cardCornerRadius="10dp"
+        android:elevation="15dp"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/btn_accountsettings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="account settings" />
+
+
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        app:cardCornerRadius="10dp"
+        android:elevation="15dp"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/btn_signoff"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:text="sign off" />
+
+    </androidx.cardview.widget.CardView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_gravity="bottom"
+        android:background="#FFFFFF"
+        >
+
+        <!-- Header Row -->
+        <TableRow
+            android:padding="8dp"
+            >
+
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/nav_home"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/homebtn"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Home"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/nav_orderhistory"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/actbutton"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="OrderHistory"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/nav_cart"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/cartbutton"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Cart"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/nav_settings"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/settingsbtn"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Settings"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    />
+            </TableRow>
+
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>
