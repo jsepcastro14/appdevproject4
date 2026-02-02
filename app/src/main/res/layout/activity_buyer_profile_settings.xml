@@ -40,16 +40,15 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="10dp"
         android:elevation="15dp"
         android:layout_margin="30dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -58,43 +57,44 @@
                 android:src="@drawable/sampleavatar"
                 android:scaleType="fitXY"/>
 
-            <TextView
-                android:id="@+id/firstname"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="150dp"
-                android:layout_marginTop="10dp"
-                android:text="Philstrong"
-                android:textSize="20dp" />
+                android:layout_marginStart="10dp"
+                android:orientation="vertical"
+                android:layout_gravity="center_vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginLeft="150dp"
-                android:layout_marginTop="40dp"
-                android:text="Pizzaras"
-                android:textSize="20dp" />
+                <TextView
+                    android:id="@+id/firstname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Philstrong"
+                    android:textSize="18sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginLeft="150dp"
-                android:layout_marginTop="70dp"
-                android:text="philstrong@gmail"
-                android:textSize="20dp" />
+                <TextView
+                    android:id="@+id/lastname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pizzaras"
+                    android:textSize="18sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginLeft="150dp"
-                android:layout_marginTop="100dp"
-                android:text="67676767676767"
-                android:textSize="20dp" />
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="philstrong@gmail"
+                    android:textSize="16sp" />
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/mobileNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
 
