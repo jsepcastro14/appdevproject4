@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class Inventory extends AppCompatActivity {
 
@@ -17,8 +19,14 @@ public class Inventory extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_inventory);
 
-
         ImageButton returnBtn = findViewById(R.id.returnbtn);
+        // Sa loob ng onCreate
+        RecyclerView rv = findViewById(R.id.inventoryRecyclerView); // Siguraduhin na may ID sa XML
+        rv.setLayoutManager(new LinearLayoutManager(this));
+
+        // Gumamit ng ProductAdapter pero gamit ang InventoryManager list
+        InventoryAdapter adapter = new InventoryAdapter(InventoryManager.getItems());
+        rv.setAdapter(adapter);
 
         returnBtn.setOnClickListener(v -> {
             finish();

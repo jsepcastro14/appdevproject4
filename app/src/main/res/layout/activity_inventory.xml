@@ -53,6 +53,7 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/inventoryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="348dp"
         android:layout_marginTop="20dp">

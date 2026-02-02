@@ -34,58 +34,35 @@
             android:layout_marginBottom="16dp"
             android:lineSpacingExtra="4dp"/>
 
-        <LinearLayout
+        <RadioGroup
+            android:id="@+id/rgPaymentMethods"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="8dp">
-
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
 
             <RadioButton
-                android:id="@+id/radioButton1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Gcash" />
-
-        </LinearLayout>
-
-            <LinearLayout
+                android:id="@+id/rbGcash"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="8dp">
-
+                android:text="GCash"
+                android:textSize="18sp" />
 
             <RadioButton
-                android:id="@+id/radioButton2"
-                android:layout_width="wrap_content"
+                android:id="@+id/rbMaya"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Visa " />
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="8dp">
-
+                android:text="Maya"
+                android:textSize="18sp" />
 
             <RadioButton
-                android:id="@+id/radioButton3"
-                android:layout_width="wrap_content"
+                android:id="@+id/rbCOD"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Cash on Delivery" />
+                android:text="Cash on Delivery (COD)"
+                android:textSize="18sp" />
 
-
-        </LinearLayout>
+        </RadioGroup>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -100,9 +77,12 @@
                 android:text="Address:"
                 android:textSize="20dp"/>
             <EditText
+                android:id="@+id/etShippingAddress"
                 android:layout_width="318dp"
                 android:layout_height="wrap_content"
-                android:hint="ex: 67 avenue st "/>
+                android:hint="ex: 67 avenue st "
+                android:inputType="textPostalAddress" />
+
         </LinearLayout>
 
         <!-- Product Price -->

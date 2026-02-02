@@ -2,32 +2,27 @@ package com.example.appdevproject2;
 
 import android.os.Bundle;
 import android.widget.ImageButton;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class OrderHistory extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_order_history);
 
-
+        // Setup Return Button
         ImageButton returnBtn = findViewById(R.id.returnbtn);
+        returnBtn.setOnClickListener(v -> finish());
 
-        returnBtn.setOnClickListener(v -> {
-            finish();
-        });
+        // Setup RecyclerView para sa History
+        RecyclerView rv = findViewById(R.id.inventoryRecyclerView); // Siguraduhin na ito ang ID sa XML mo
+        rv.setLayoutManager(new LinearLayoutManager(this));
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        // Gamitin ang bagong OrderHistoryAdapter
+        OrderHistoryAdapter adapter = new OrderHistoryAdapter(OrderHistoryManager.getItems());
+        rv.setAdapter(adapter);
     }
 }

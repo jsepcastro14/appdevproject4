@@ -5,13 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import android.content.Context;
+import android.widget.Toast;
+
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
     List<Product> productList;
 
@@ -93,6 +98,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         ImageButton btnPlus = view.findViewById(R.id.plus);
         ImageButton btnMinus = view.findViewById(R.id.minus);
         Button btnAddToCart = view.findViewById(R.id.btnAddToCart);
+        Button btnBuyNow = view.findViewById(R.id.btnBuyNow);
 
         // 4. I-set ang data na galing sa Home list
         name.setText(product.getName());
@@ -148,7 +154,69 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             context.startActivity(intent);
         });
 
+        btnBuyNow.setOnClickListener(v -> {
+            bottomSheetDialog.dismiss();
+
+            // Kunin ang computed total price mula sa updatePrice logic mo kanina
+            double total = basePrice * count[0];
+            String finalPrice = String.format("₱%.2f", total);
+
+            showPaymentMethodDialog(context, finalPrice, product); // Ipapasa ang presyo
+        });
+
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
+    }
+
+    private void showPaymentMethodDialog(Context context, String totalPriceString, Product currentProduct) {
+        BottomSheetDialog paymentDialog = new BottomSheetDialog(context);
+        View paymentView = LayoutInflater.from(context).inflate(R.layout.activity_payment_method, null);
+        RadioGroup rgPayment = paymentView.findViewById(R.id.rgPaymentMethods);
+        Button btnPayNow = paymentView.findViewById(R.id.btnBuyNow);
+
+        // Gagamitin natin ang payment layout mo (halimbawa: layout_payment_method)
+        TextView tvTotal = paymentView.findViewById(R.id.dialogProductPrice);
+        tvTotal.setText(totalPriceString); // Dito lalabas yung "₱500.00" halimbawa
+
+        // 2. Paganahin ang Return Button
+        paymentView.findViewById(R.id.returnbtn).setOnClickListener(v -> {
+            paymentDialog.dismiss(); // Isasara lang ang payment dialog
+        });
+
+        EditText etAddress = paymentView.findViewById(R.id.etShippingAddress);
+        btnPayNow.setOnClickListener(v -> {
+            String address = etAddress.getText().toString().trim();
+            RadioButton selectedRB = paymentView.findViewById(rgPayment.getCheckedRadioButtonId());
+            String paymentMethod = selectedRB.getText().toString();
+
+            // Halimbawa: I-save natin ang Address + Payment Method sa "Category" field
+            // para hindi na tayo gumawa ng bagong variables sa Product class.
+            String transactionDetails = address + " (" + paymentMethod + ")";
+
+            if (context instanceof AddtoCart) {
+                // SCENARIO: Galing sa Cart (Checkout Lahat)
+                for (Product p : CartManager.getCartItems()) {
+                    Product soldProduct = new Product(p.getName(), transactionDetails, p.getQuantity(), p.getPrice());
+
+                    // DAPAT PAREHAS SILANG TAWAGIN DITO:
+                    InventoryManager.addItem(soldProduct);
+                    OrderHistoryManager.addItem(soldProduct);
+                }
+                CartManager.getCartItems().clear();
+            } else {
+                // SCENARIO: Galing sa Home (Buy Now - Isang item lang)
+                Product singlePurchase = new Product(currentProduct.getName(), transactionDetails, currentProduct.getQuantity(), currentProduct.getPrice());
+
+                // DAPAT PAREHAS DIN SILANG TAWAGIN DITO:
+                InventoryManager.addItem(singlePurchase);
+                OrderHistoryManager.addItem(singlePurchase);
+            }
+
+            Toast.makeText(context, "Payment Successful!", Toast.LENGTH_SHORT).show();
+            paymentDialog.dismiss();
+        });
+
+        paymentDialog.setContentView(paymentView);
+        paymentDialog.show();
     }
 }
