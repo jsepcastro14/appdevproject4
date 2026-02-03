@@ -13,4 +13,10 @@ public class Product {
     public String getCategory() { return category; }
     public String getQuantity() { return quantity; }
     public String getPrice() { return price; }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
 }
+
+

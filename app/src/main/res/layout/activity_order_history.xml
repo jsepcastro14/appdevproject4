@@ -8,58 +8,68 @@
     android:orientation="vertical"
     tools:context=".Inventory">
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="71dp"
-        android:background="@color/black"
-        android:orientation="vertical">
+        android:background="@color/black">
 
         <TextView
-            android:layout_width="244dp"
+            android:layout_width="wrap_content"
             android:layout_height="39dp"
             android:layout_marginTop="12dp"
-            android:gravity="center"
+            android:paddingStart="20dp"
+            android:gravity="center_vertical"
             android:text="ORDER HISTORY"
             android:textColor="@color/white"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/refreshbtn"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_marginLeft="300dp"
+            android:layout_toStartOf="@id/returnbtn"
             android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:src="@drawable/refreshbtn"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Home"
+            android:contentDescription="Refresh"
             android:padding="12dp"
-            android:scaleType="centerInside"
-            />
+            android:scaleType="centerInside" />
 
         <ImageButton
             android:id="@+id/returnbtn"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_marginLeft="350dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:src="@drawable/returnbtn"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Home"
+            android:contentDescription="Return"
             android:padding="12dp"
-            android:scaleType="centerInside"
-            />
+            android:scaleType="centerInside" />
     </RelativeLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/inventoryRecyclerView"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="348dp"
-        android:layout_marginTop="20dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
-    </androidx.recyclerview.widget.RecyclerView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/orderHistoryRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:nestedScrollingEnabled="false" />
 
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

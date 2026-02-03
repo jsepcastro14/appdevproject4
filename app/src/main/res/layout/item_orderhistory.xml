@@ -52,7 +52,6 @@
                 android:layout_marginTop="4dp"
                 android:text="Quantity"
                 android:textSize="14sp" />
-
             <TextView
                 android:id="@+id/addresstext"
                 android:layout_width="match_parent"
@@ -62,6 +61,8 @@
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 />
+
+
             <TextView
                 android:id="@+id/product_price"
                 android:layout_width="match_parent"

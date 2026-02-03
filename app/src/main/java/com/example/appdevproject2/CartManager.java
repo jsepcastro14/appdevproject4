@@ -19,4 +19,9 @@ public class CartManager {
             cartItems.remove(position);
         }
     }
+    public static void clearCart() {
+        cartItems.clear();
+    }
+
+
 }

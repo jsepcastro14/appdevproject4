@@ -78,6 +78,30 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
+    private void updateProductInventory(Product boughtProduct) {
+        List<Product> allProducts = ProductManager.getAllProducts();
+
+        for (int i = 0; i < allProducts.size(); i++) {
+            Product p = allProducts.get(i);
+            if (p.getName().equals(boughtProduct.getName())) {
+
+                // Kunin ang kasalukuyang numero mula sa string (halimbawa: "10 pcs" -> 10)
+                int currentQty = Integer.parseInt(p.getQuantity().replaceAll("[^0-9]", ""));
+                int boughtQty = Integer.parseInt(boughtProduct.getQuantity().replaceAll("[^0-9]", ""));
+
+                int remainingQty = currentQty - boughtQty;
+
+                if (remainingQty <= 0) {
+                    // Burahin sa listahan kung ubos na
+                    allProducts.remove(i);
+                } else {
+                    // I-update ang quantity kung may natira pa
+                    p.setQuantity(remainingQty + " pcs");
+                }
+                break;
+            }
+        }
+    }
 
     private void showPurchaseDialog(Context context, Product product) {
         // 1. Create ang BottomSheetDialog
@@ -186,36 +210,57 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         EditText etAddress = paymentView.findViewById(R.id.etShippingAddress);
         btnPayNow.setOnClickListener(v -> {
             String address = etAddress.getText().toString().trim();
-            RadioButton selectedRB = paymentView.findViewById(rgPayment.getCheckedRadioButtonId());
-            String paymentMethod = selectedRB.getText().toString();
-
-            // Halimbawa: I-save natin ang Address + Payment Method sa "Category" field
-            // para hindi na tayo gumawa ng bagong variables sa Product class.
-            String transactionDetails = address + " (" + paymentMethod + ")";
-
-            if (context instanceof AddtoCart) {
-                // SCENARIO: Galing sa Cart (Checkout Lahat)
-                for (Product p : CartManager.getCartItems()) {
-                    Product soldProduct = new Product(p.getName(), transactionDetails, p.getQuantity(), p.getPrice());
-
-                    // DAPAT PAREHAS SILANG TAWAGIN DITO:
-                    InventoryManager.addItem(soldProduct);
-                    OrderHistoryManager.addItem(soldProduct);
-                }
-                CartManager.getCartItems().clear();
-            } else {
-                // SCENARIO: Galing sa Home (Buy Now - Isang item lang)
-                Product singlePurchase = new Product(currentProduct.getName(), transactionDetails, currentProduct.getQuantity(), currentProduct.getPrice());
-
-                // DAPAT PAREHAS DIN SILANG TAWAGIN DITO:
-                InventoryManager.addItem(singlePurchase);
-                OrderHistoryManager.addItem(singlePurchase);
+            if (address.isEmpty()) {
+                Toast.makeText(context, "Please enter address", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            Toast.makeText(context, "Payment Successful!", Toast.LENGTH_SHORT).show();
+            // 1. Kunin ang master list mula sa ProductManager
+            List<Product> masterList = ProductManager.getAllProducts();
+
+            // 2. Hanapin ang index ng product sa master list base sa pangalan
+            int indexInMaster = -1;
+            for (int i = 0; i < masterList.size(); i++) {
+                if (masterList.get(i).getName().equals(currentProduct.getName())) {
+                    indexInMaster = i;
+                    break;
+                }
+            }
+
+            if (indexInMaster != -1) {
+                try {
+                    Product productToUpdate = masterList.get(indexInMaster);
+
+                    // 3. I-parse ang quantity (Alisin ang " pcs")
+                    int currentQty = Integer.parseInt(productToUpdate.getQuantity().replace(" pcs", "").trim());
+
+                    // Bawasan ng 1 (o kung may input qty ka, gamitin iyon)
+                    int newQty = currentQty - 1;
+
+                    if (newQty <= 0) {
+                        // 4. Tanggalin sa master list kung zero na
+                        masterList.remove(indexInMaster);
+                        Toast.makeText(context, "Product Sold Out!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // 5. I-update ang quantity string
+                        productToUpdate.setQuantity(newQty + " pcs");
+                    }
+
+                    // 6. I-update ang UI (Refresh ang RecyclerView)
+                    notifyDataSetChanged();
+
+                } catch (Exception e) {
+                    Toast.makeText(context, "Error updating quantity", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            // Isave sa History
+            String paymentMethod = ((RadioButton) rgPayment.findViewById(rgPayment.getCheckedRadioButtonId())).getText().toString();
+            Product soldProduct = new Product(currentProduct.getName(), address + " (" + paymentMethod + ")", "1 pcs", currentProduct.getPrice());
+            OrderHistoryManager.addItem(soldProduct);
+
             paymentDialog.dismiss();
         });
-
         paymentDialog.setContentView(paymentView);
         paymentDialog.show();
     }

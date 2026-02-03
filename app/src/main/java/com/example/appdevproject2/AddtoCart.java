@@ -100,6 +100,17 @@ public class AddtoCart extends AppCompatActivity {
                 }
 
             Toast.makeText(context, "Payment Successful!", Toast.LENGTH_SHORT).show();
+
+                CartManager.clearCart();
+
+                if (context instanceof AddtoCart) {
+                    AddtoCart activity = (AddtoCart) context;
+                    // Gumawa ng bagong adapter na walang laman o i-notify ang existing adapter
+                    RecyclerView rv = activity.findViewById(R.id.cartRecyclerView);
+                    CartProductAdapter emptyAdapter = new CartProductAdapter(CartManager.getCartItems());
+                    rv.setAdapter(emptyAdapter);
+                }
+
             paymentDialog.dismiss();
         });
         paymentView.findViewById(R.id.returnbtn).setOnClickListener(v -> paymentDialog.dismiss());
