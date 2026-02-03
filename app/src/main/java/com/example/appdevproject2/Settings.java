@@ -1,5 +1,7 @@
 package com.example.appdevproject2;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -13,6 +15,24 @@ public class Settings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buyer_profile_settings);
+
+        // Retrieve user details from SharedPreferences
+        SharedPreferences sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        String firstName = sharedPref.getString("firstName", "Philstrong");
+        String lastName = sharedPref.getString("lastName", "Pizzaras");
+        String email = sharedPref.getString("email", "philstrong@gmail.com");
+        String mobileNum = sharedPref.getString("mobileNum", "67676767676767");
+
+        // Set the values to TextViews
+        TextView tvFirstName = findViewById(R.id.firstname);
+        TextView tvLastName = findViewById(R.id.lastname);
+        TextView tvEmail = findViewById(R.id.email);
+        TextView tvMobileNum = findViewById(R.id.mobileNum);
+
+        tvFirstName.setText(firstName);
+        tvLastName.setText(lastName);
+        tvEmail.setText(email);
+        tvMobileNum.setText(mobileNum);
 
         // Maaari mo ring lagyan ng return logic ang returnbtn dito
         findViewById(R.id.returnbtn).setOnClickListener(v -> finish());
@@ -68,5 +88,26 @@ public class Settings extends AppCompatActivity {
             Intent intent = new Intent(Settings.this, Home.class);
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh data when returning to this activity
+        SharedPreferences sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        String firstName = sharedPref.getString("firstName", "Philstrong");
+        String lastName = sharedPref.getString("lastName", "Pizzaras");
+        String email = sharedPref.getString("email", "philstrong@gmail.com");
+        String mobileNum = sharedPref.getString("mobileNum", "67676767676767");
+
+        TextView tvFirstName = findViewById(R.id.firstname);
+        TextView tvLastName = findViewById(R.id.lastname);
+        TextView tvEmail = findViewById(R.id.email);
+        TextView tvMobileNum = findViewById(R.id.mobileNum);
+
+        tvFirstName.setText(firstName);
+        tvLastName.setText(lastName);
+        tvEmail.setText(email);
+        tvMobileNum.setText(mobileNum);
     }
 }
