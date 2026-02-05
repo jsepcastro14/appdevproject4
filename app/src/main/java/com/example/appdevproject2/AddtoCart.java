@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -52,24 +50,6 @@ public class AddtoCart extends AppCompatActivity {
 
         fetchCartFromServer();
 
-<<<<<<< HEAD
-        if (name != null) {
-            cartList.add(new Product(name, category, qty, price));
-        }
-
-        CartProductAdapter adapter = new CartProductAdapter(CartManager.getCartItems());
-        recyclerView.setAdapter(adapter);
-
-        ImageButton refreshBtn = findViewById(R.id.refreshbtn);
-        refreshBtn.setOnClickListener(v -> {
-            CartProductAdapter newAdapter = new CartProductAdapter(CartManager.getCartItems());
-            recyclerView.setAdapter(newAdapter);
-            Toast.makeText(this, "Cart refreshed", Toast.LENGTH_SHORT).show();
-        });
-
-        // Return button logic
-=======
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
         checkoutBTN.setOnClickListener(v -> {
             if (cartList.isEmpty()) {
                 Toast.makeText(this, "Cart is empty", Toast.LENGTH_SHORT).show();
@@ -132,48 +112,6 @@ public class AddtoCart extends AppCompatActivity {
 
         tvTotal.setText(totalAmount);
 
-<<<<<<< HEAD
-            btnPayNow.setOnClickListener(v -> {
-                String addressText = etAddress.getText().toString().trim();
-                int selectedId = rgPayment.getCheckedRadioButtonId();
-
-                if (addressText.isEmpty() || selectedId == -1) {
-                    Toast.makeText(context, "Please complete details", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                RadioButton rb = paymentView.findViewById(selectedId);
-                String fullInfo = "Address: " + addressText + " | Method: " + rb.getText();
-
-                // Loop sa lahat ng binili sa cart
-                for (Product p : CartManager.getCartItems()) {
-                    Product entry = new Product(p.getName(), fullInfo, p.getQuantity(), p.getPrice());
-                    InventoryManager.addItem(entry);
-                    OrderHistoryManager.addItem(entry);
-
-                    // LOGIC: Hanapin ang product sa main list at markahan bilang sold
-                    for (Product mainProd : ProductManager.getAllProducts()) {
-                        if (mainProd.getName().equals(p.getName())) {
-                            mainProd.setAvailable(false); // Dito ito mawawala sa Home list
-                            break;
-                        }
-                    }
-                }
-
-                Toast.makeText(context, "Payment Successful!", Toast.LENGTH_SHORT).show();
-                CartManager.clearCart();
-
-                // I-update ang UI ng Cart (para maging empty)
-                if (context instanceof AddtoCart) {
-                    AddtoCart activity = (AddtoCart) context;
-                    RecyclerView rv = activity.findViewById(R.id.cartRecyclerView);
-                    CartProductAdapter emptyAdapter = new CartProductAdapter(CartManager.getCartItems());
-                    rv.setAdapter(emptyAdapter);
-                }
-
-                paymentDialog.dismiss();
-            });
-=======
         btnPayNow.setOnClickListener(v -> {
             String addressText = etAddress.getText().toString().trim();
             if (addressText.isEmpty()) {
@@ -193,7 +131,6 @@ public class AddtoCart extends AppCompatActivity {
             placeOrderOnServer(context, fullInfo, paymentDialog);
         });
         
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
         paymentView.findViewById(R.id.returnbtn).setOnClickListener(v -> paymentDialog.dismiss());
 
         paymentDialog.setContentView(paymentView);
@@ -210,7 +147,9 @@ public class AddtoCart extends AppCompatActivity {
                     if (response.trim().equals("success")) {
                         Toast.makeText(context, "Order Placed Successfully!", Toast.LENGTH_SHORT).show();
                         cartList.clear();
-                        adapter.notifyDataSetChanged();
+                        if (adapter != null) {
+                            adapter.notifyDataSetChanged();
+                        }
                         dialog.dismiss();
                         startActivity(new Intent(AddtoCart.this, OrderHistory.class));
                         finish();

@@ -76,16 +76,8 @@ public class Home extends AppCompatActivity {
             startActivity(new Intent(Home.this, OrderHistory.class));
         });
 
-<<<<<<< HEAD
-        findViewById(R.id.refreshbtn).setOnClickListener(v -> {
-            updateUI(mySpinner.getSelectedItem().toString());
-        });
-
-        // Refresh button logic
-        findViewById(R.id.refreshbtn).setOnClickListener(v -> updateUI(mySpinner.getSelectedItem().toString()));
-=======
-        findViewById(R.id.returnbtn).setOnClickListener(v -> fetchProductsFromServer(mySpinner.getSelectedItem().toString()));
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
+        // Corrected ID to match activity_home.xml
+        findViewById(R.id.refreshbtn).setOnClickListener(v -> fetchProductsFromServer(mySpinner.getSelectedItem().toString()));
     }
 
     @Override
@@ -97,21 +89,6 @@ public class Home extends AppCompatActivity {
     private void fetchProductsFromServer(String category) {
         String url = "http://10.0.2.2/cropcart/get_products.php";
 
-<<<<<<< HEAD
-        for (Product p : allProducts) {
-            // FILTER: Isama lang ang product kung ito ay AVAILABLE pa
-            if (p.isAvailable()) {
-                if (category.equals("All")) {
-                    filteredList.add(p);
-                } else if (p.getCategory().equalsIgnoreCase(category)) {
-                    filteredList.add(p);
-                }
-            }
-        }
-
-        adapter = new ProductAdapter(filteredList);
-        recyclerView.setAdapter(adapter);
-=======
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     try {
@@ -146,6 +123,5 @@ public class Home extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
     }
 }

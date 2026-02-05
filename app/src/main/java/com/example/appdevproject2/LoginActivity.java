@@ -1,15 +1,28 @@
 package com.example.appdevproject2;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint; // Idagdag ito para sa underline
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 import android.text.Html;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -19,32 +32,30 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // 1. Hanapin ang TextView
         TextView tvCreateAccount = findViewById(R.id.tvCreateAccount);
+        EditText etEmail = findViewById(R.id.etEmail);
+        EditText etPassword = findViewById(R.id.etPassword);
+        Button btnLogIn = findViewById(R.id.btnLogIn);
 
-        // Dito natin ise-set na yung "Create Account" lang ang may style
         String text = "New here? <font color='#0000FF'><u>Create Account</u></font>";
         tvCreateAccount.setText(Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY));
 
-        // Navigation logic papuntang RegisterActivity
         tvCreateAccount.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
 
-        Button btnLogIn = findViewById(R.id.btnLogIn);
-
-        // 2. Click listener para sa navigation
         btnLogIn.setOnClickListener(v -> {
-            // 3. Intent para lumipat sa Home activity
-            Intent intent = new Intent(LoginActivity.this, Home.class);
-            startActivity(intent);
+            String email = etEmail.getText().toString();
+            String password = etPassword.getText().toString();
 
-            finish();
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please enter credentials", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            loginUser(email, password);
         });
-<<<<<<< HEAD
-        // ... rest of your code (ViewCompat listeners)
-=======
     }
 
     private void loginUser(String email, String password) {
@@ -91,6 +102,5 @@ public class LoginActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
     }
 }

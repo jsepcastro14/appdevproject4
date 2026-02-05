@@ -208,47 +208,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 return;
             }
 
-<<<<<<< HEAD
-            if (indexInMaster != -1) {
-                try {
-                    Product productToUpdate = masterList.get(indexInMaster);
-
-                    // 3. I-parse ang quantity (Alisin ang " pcs")
-                    int currentQty = Integer.parseInt(productToUpdate.getQuantity().replace(" pcs", "").trim());
-
-                    // Bawasan ng 1 (o kung may input qty ka, gamitin iyon)
-                    int newQty = currentQty - 1;
-
-                    if (newQty <= 0) {
-                        // 4. Tanggalin sa master list kung zero na
-                        masterList.remove(indexInMaster);
-                        Toast.makeText(context, "Product Sold Out!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // 5. I-update ang quantity string
-                        productToUpdate.setQuantity(newQty + " pcs");
-                    }
-
-                    // 6. I-update ang UI (Refresh ang RecyclerView)
-                    notifyDataSetChanged();
-
-                } catch (Exception e) {
-                    Toast.makeText(context, "Error updating quantity", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            // Isave sa History
-            String paymentMethod = ((RadioButton) rgPayment.findViewById(rgPayment.getCheckedRadioButtonId())).getText().toString();
-            Product soldProduct = new Product(currentProduct.getName(), address + " (" + paymentMethod + ")", "1 pcs", currentProduct.getPrice());
-            OrderHistoryManager.addItem(soldProduct);
-
-            SuccessfulOrderManager.addOrder(currentProduct);
-=======
             RadioButton rb = paymentView.findViewById(selectedId);
             String paymentMethod = rb.getText().toString();
             
             // For Buy Now, we directly place order
             placeOrderServer(context, currentProduct, quantity, totalPriceString, address + " (" + paymentMethod + ")");
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
             paymentDialog.dismiss();
         });
         paymentDialog.setContentView(paymentView);

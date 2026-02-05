@@ -3,11 +3,7 @@ package com.example.appdevproject2;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-<<<<<<< HEAD
-import android.widget.ImageButton; // Siguraduhin na i-import ito
-=======
 import android.widget.ImageButton;
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -43,29 +39,13 @@ public class Inventory extends AppCompatActivity {
         findViewById(R.id.returnbtn).setOnClickListener(v -> finish());
         
         // Refresh button logic
-        findViewById(R.id.refreshbtn).setOnClickListener(v -> fetchInventory());
-
-<<<<<<< HEAD
-        returnBtn.setOnClickListener(v -> {
-            finish();
-        });
-
         ImageButton refreshBtn = findViewById(R.id.refreshbtn);
         refreshBtn.setOnClickListener(v -> {
-            InventoryAdapter newAdapter = new InventoryAdapter(InventoryManager.getItems());
-            rv.setAdapter(newAdapter);
+            fetchInventory();
             Toast.makeText(this, "Inventory updated", Toast.LENGTH_SHORT).show();
         });
 
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-=======
         fetchInventory();
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
     }
 
     private void fetchInventory() {

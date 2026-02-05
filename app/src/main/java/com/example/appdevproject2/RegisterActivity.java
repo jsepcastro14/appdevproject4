@@ -4,8 +4,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -15,14 +26,15 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         TextView tvLoginRedirect = findViewById(R.id.tvLoginRedirect);
+        EditText etFirstName = findViewById(R.id.etFirstName);
+        EditText etLastName = findViewById(R.id.etLastName);
+        EditText etEmail = findViewById(R.id.etEmail);
+        EditText etPassword = findViewById(R.id.etPassword);
+        EditText etMobileNum = findViewById(R.id.etMobileNum);
 
-        // Ang string na gagamit ng HTML tags para sa blue at underline
         String text = "Have an account? <font color='#0000FF'><u>Log in</u></font>";
-
-        // I-set ang formatted text
         tvLoginRedirect.setText(Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY));
 
-        // Click listener para bumalik sa Login screen
         tvLoginRedirect.setOnClickListener(v -> {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -30,19 +42,21 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         Button btnSignUp = findViewById(R.id.btnSignUp);
-
-        // 2. Set ang Click Listener para sa navigation
         btnSignUp.setOnClickListener(v -> {
-            // 3. Intent para lumipat sa LoginActivity
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-            startActivity(intent);
+            String firstName = etFirstName.getText().toString();
+            String lastName = etLastName.getText().toString();
+            String email = etEmail.getText().toString();
+            String password = etPassword.getText().toString();
+            String mobileNum = etMobileNum.getText().toString();
 
-            finish();
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || mobileNum.isEmpty()) {
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            registerUser(firstName, lastName, email, password, mobileNum);
         });
     }
-<<<<<<< HEAD
-}
-=======
 
     private void registerUser(String firstName, String lastName, String email, String password, String mobileNum) {
         String url = "http://10.0.2.2/cropcart/register.php";
@@ -74,4 +88,3 @@ public class RegisterActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 }
->>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
