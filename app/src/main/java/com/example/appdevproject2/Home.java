@@ -52,7 +52,8 @@ public class Home extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         // Navigation Buttons
@@ -92,18 +93,17 @@ public class Home extends AppCompatActivity {
         List<Product> allProducts = ProductManager.getAllProducts();
         filteredList.clear();
 
-        if (category.equals("All")) {
-            filteredList.addAll(allProducts);
-        } else {
-            // I-filter ang mga products base sa category string
-            for (Product p : allProducts) {
-                if (p.getCategory().equalsIgnoreCase(category)) {
+        for (Product p : allProducts) {
+            // FILTER: Isama lang ang product kung ito ay AVAILABLE pa
+            if (p.isAvailable()) {
+                if (category.equals("All")) {
+                    filteredList.add(p);
+                } else if (p.getCategory().equalsIgnoreCase(category)) {
                     filteredList.add(p);
                 }
             }
         }
 
-        // I-set ang adapter gamit ang filtered list
         adapter = new ProductAdapter(filteredList);
         recyclerView.setAdapter(adapter);
     }

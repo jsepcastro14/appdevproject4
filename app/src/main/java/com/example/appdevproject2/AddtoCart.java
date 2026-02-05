@@ -88,39 +88,45 @@ public class AddtoCart extends AppCompatActivity {
         tvTotal.setText(totalAmount);
 
             btnPayNow.setOnClickListener(v -> {
-                // 1. Kunin ang Address at RadioButton Selection
                 String addressText = etAddress.getText().toString().trim();
-                RadioButton rb = paymentView.findViewById(rgPayment.getCheckedRadioButtonId());
-                String fullInfo = "Address: " + addressText + " | Method: " + rb.getText();
+                int selectedId = rgPayment.getCheckedRadioButtonId();
 
-                // 2. I-save sa parehong Managers
-                if (context instanceof AddtoCart) {
-                    for (Product p : CartManager.getCartItems()) {
-                        // Gumagawa tayo ng bagong Product object para hindi ma-affect ang original reference
-                        Product entry = new Product(p.getName(), fullInfo, p.getQuantity(), p.getPrice());
-                        InventoryManager.addItem(entry);
-                        OrderHistoryManager.addItem(entry);
-                    }
-                } else {
-                    Product entry = new Product(currentProduct.getName(), fullInfo, currentProduct.getQuantity(), currentProduct.getPrice());
-                    InventoryManager.addItem(entry);
-                    OrderHistoryManager.addItem(entry);
+                if (addressText.isEmpty() || selectedId == -1) {
+                    Toast.makeText(context, "Please complete details", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-            Toast.makeText(context, "Payment Successful!", Toast.LENGTH_SHORT).show();
+                RadioButton rb = paymentView.findViewById(selectedId);
+                String fullInfo = "Address: " + addressText + " | Method: " + rb.getText();
 
+                // Loop sa lahat ng binili sa cart
+                for (Product p : CartManager.getCartItems()) {
+                    Product entry = new Product(p.getName(), fullInfo, p.getQuantity(), p.getPrice());
+                    InventoryManager.addItem(entry);
+                    OrderHistoryManager.addItem(entry);
+
+                    // LOGIC: Hanapin ang product sa main list at markahan bilang sold
+                    for (Product mainProd : ProductManager.getAllProducts()) {
+                        if (mainProd.getName().equals(p.getName())) {
+                            mainProd.setAvailable(false); // Dito ito mawawala sa Home list
+                            break;
+                        }
+                    }
+                }
+
+                Toast.makeText(context, "Payment Successful!", Toast.LENGTH_SHORT).show();
                 CartManager.clearCart();
 
+                // I-update ang UI ng Cart (para maging empty)
                 if (context instanceof AddtoCart) {
                     AddtoCart activity = (AddtoCart) context;
-                    // Gumawa ng bagong adapter na walang laman o i-notify ang existing adapter
                     RecyclerView rv = activity.findViewById(R.id.cartRecyclerView);
                     CartProductAdapter emptyAdapter = new CartProductAdapter(CartManager.getCartItems());
                     rv.setAdapter(emptyAdapter);
                 }
 
-            paymentDialog.dismiss();
-        });
+                paymentDialog.dismiss();
+            });
         paymentView.findViewById(R.id.returnbtn).setOnClickListener(v -> paymentDialog.dismiss());
 
         paymentDialog.setContentView(paymentView);
