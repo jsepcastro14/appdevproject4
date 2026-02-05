@@ -1,6 +1,8 @@
 package com.example.appdevproject2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +12,20 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.List;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import android.content.Context;
-import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
     List<Product> productList;
@@ -48,20 +58,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             holder.btnDelete.setVisibility(View.GONE);
         }
 
-        // DELETE LOGIC
         holder.btnDelete.setOnClickListener(v -> {
             int actualPosition = holder.getAdapterPosition();
             if (actualPosition != RecyclerView.NO_POSITION) {
-                productList.remove(actualPosition); // Tanggalin sa listahan
-                notifyItemRemoved(actualPosition);   // I-update ang UI
+                productList.remove(actualPosition);
+                notifyItemRemoved(actualPosition);
                 notifyItemRangeChanged(actualPosition, productList.size());
             }
-            });
-
-        // Ang existing click listener mo para sa pop-up ay mananatili
-        holder.itemView.setOnClickListener(v -> {
-            showPurchaseDialog(v.getContext(), product);
-            });
+        });
     }
 
     @Override
@@ -78,40 +82,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
-    private void updateProductInventory(Product boughtProduct) {
-        List<Product> allProducts = ProductManager.getAllProducts();
-
-        for (int i = 0; i < allProducts.size(); i++) {
-            Product p = allProducts.get(i);
-            if (p.getName().equals(boughtProduct.getName())) {
-
-                // Kunin ang kasalukuyang numero mula sa string (halimbawa: "10 pcs" -> 10)
-                int currentQty = Integer.parseInt(p.getQuantity().replaceAll("[^0-9]", ""));
-                int boughtQty = Integer.parseInt(boughtProduct.getQuantity().replaceAll("[^0-9]", ""));
-
-                int remainingQty = currentQty - boughtQty;
-
-                if (remainingQty <= 0) {
-                    // Burahin sa listahan kung ubos na
-                    allProducts.remove(i);
-                } else {
-                    // I-update ang quantity kung may natira pa
-                    p.setQuantity(remainingQty + " pcs");
-                }
-                break;
-            }
-        }
-    }
 
     private void showPurchaseDialog(Context context, Product product) {
-        // 1. Create ang BottomSheetDialog
         com.google.android.material.bottomsheet.BottomSheetDialog bottomSheetDialog =
                 new com.google.android.material.bottomsheet.BottomSheetDialog(context);
 
-        // 2. I-inflate ang layout na purchaseorbuy
         View view = LayoutInflater.from(context).inflate(R.layout.activity_purchaseorbuy, null);
 
-        // 3. I-bind ang views mula sa XML (I-check ang IDs sa activity_purchaseorbuy.xml)
         TextView name = view.findViewById(R.id.dialogProductName);
         TextView category = view.findViewById(R.id.dialogProductCategory);
         TextView price = view.findViewById(R.id.dialogProductPrice);
@@ -124,7 +101,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Button btnAddToCart = view.findViewById(R.id.btnAddToCart);
         Button btnBuyNow = view.findViewById(R.id.btnBuyNow);
 
-        // 4. I-set ang data na galing sa Home list
         name.setText(product.getName());
         category.setText(product.getCategory());
         price.setText(product.getPrice());
@@ -140,7 +116,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             totalPrice.setText(String.format("Total: ₱%.2f", total));
         };
 
-        // Gagana na ang click listeners kahit ImageButton sila
         btnPlus.setOnClickListener(v -> {
             count[0]++;
             updatePrice.run();
@@ -157,57 +132,69 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         returnBtn.setOnClickListener(v -> bottomSheetDialog.dismiss());
 
         btnAddToCart.setOnClickListener(v -> {
-            // Isara muna ang dialog bago lumipat
+            addToCartServer(context, product, count[0], basePrice * count[0]);
             bottomSheetDialog.dismiss();
-
-            // Intent para lumipat sa AddtoCart Activity
-            Intent intent = new Intent(context, AddtoCart.class);
-
-            // "Ipapasa" natin ang data para parehas ang lalabas sa kabilang layout
-            intent.putExtra("prodName", product.getName());
-            intent.putExtra("prodCategory", product.getCategory());
-            intent.putExtra("prodQuantity", String.valueOf(count[0]) + " pcs");
-
-            // Kunin ang updated total price (basePrice * count)
-            double total = basePrice * count[0];
-            String finalPrice = String.format("₱%.2f", total);
-            String finalQty = count[0] + " pcs";
-
-            CartManager.addItem(new Product(product.getName(), product.getCategory(), finalQty, finalPrice));
-
-            context.startActivity(intent);
         });
 
         btnBuyNow.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
-
-            // Kunin ang computed total price mula sa updatePrice logic mo kanina
             double total = basePrice * count[0];
             String finalPrice = String.format("₱%.2f", total);
-
-            showPaymentMethodDialog(context, finalPrice, product); // Ipapasa ang presyo
+            showPaymentMethodDialog(context, finalPrice, product, count[0]);
         });
 
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
     }
 
-    private void showPaymentMethodDialog(Context context, String totalPriceString, Product currentProduct) {
+    private void addToCartServer(Context context, Product product, int quantity, double totalPrice) {
+        String url = "http://10.0.2.2/cropcart/add_to_cart.php";
+        SharedPreferences sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        int userId = sharedPref.getInt("userId", -1);
+
+        if (userId == -1) {
+            Toast.makeText(context, "Please login first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    if (response.trim().equals("success")) {
+                        Toast.makeText(context, "Added to Cart!", Toast.LENGTH_SHORT).show();
+                        context.startActivity(new Intent(context, AddtoCart.class));
+                    } else {
+                        Toast.makeText(context, "Failed: " + response, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", String.valueOf(userId));
+                params.put("product_id", String.valueOf(product.getProductId()));
+                params.put("productName", product.getName());
+                params.put("category", product.getCategory());
+                params.put("Quantity", String.valueOf(quantity));
+                params.put("price", String.format("%.2f", totalPrice));
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(stringRequest);
+    }
+
+    private void showPaymentMethodDialog(Context context, String totalPriceString, Product currentProduct, int quantity) {
         BottomSheetDialog paymentDialog = new BottomSheetDialog(context);
         View paymentView = LayoutInflater.from(context).inflate(R.layout.activity_payment_method, null);
         RadioGroup rgPayment = paymentView.findViewById(R.id.rgPaymentMethods);
         Button btnPayNow = paymentView.findViewById(R.id.btnBuyNow);
-
-        // Gagamitin natin ang payment layout mo (halimbawa: layout_payment_method)
         TextView tvTotal = paymentView.findViewById(R.id.dialogProductPrice);
-        tvTotal.setText(totalPriceString); // Dito lalabas yung "₱500.00" halimbawa
-
-        // 2. Paganahin ang Return Button
-        paymentView.findViewById(R.id.returnbtn).setOnClickListener(v -> {
-            paymentDialog.dismiss(); // Isasara lang ang payment dialog
-        });
-
         EditText etAddress = paymentView.findViewById(R.id.etShippingAddress);
+
+        tvTotal.setText(totalPriceString);
+
+        paymentView.findViewById(R.id.returnbtn).setOnClickListener(v -> paymentDialog.dismiss());
+
         btnPayNow.setOnClickListener(v -> {
             String address = etAddress.getText().toString().trim();
             if (address.isEmpty()) {
@@ -215,18 +202,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 return;
             }
 
-            // 1. Kunin ang master list mula sa ProductManager
-            List<Product> masterList = ProductManager.getAllProducts();
-
-            // 2. Hanapin ang index ng product sa master list base sa pangalan
-            int indexInMaster = -1;
-            for (int i = 0; i < masterList.size(); i++) {
-                if (masterList.get(i).getName().equals(currentProduct.getName())) {
-                    indexInMaster = i;
-                    break;
-                }
+            int selectedId = rgPayment.getCheckedRadioButtonId();
+            if (selectedId == -1) {
+                Toast.makeText(context, "Please select payment method", Toast.LENGTH_SHORT).show();
+                return;
             }
 
+<<<<<<< HEAD
             if (indexInMaster != -1) {
                 try {
                     Product productToUpdate = masterList.get(indexInMaster);
@@ -260,9 +242,55 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             OrderHistoryManager.addItem(soldProduct);
 
             SuccessfulOrderManager.addOrder(currentProduct);
+=======
+            RadioButton rb = paymentView.findViewById(selectedId);
+            String paymentMethod = rb.getText().toString();
+            
+            // For Buy Now, we directly place order
+            placeOrderServer(context, currentProduct, quantity, totalPriceString, address + " (" + paymentMethod + ")");
+>>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
             paymentDialog.dismiss();
         });
         paymentDialog.setContentView(paymentView);
         paymentDialog.show();
+    }
+
+    private void placeOrderServer(Context context, Product product, int quantity, String price, String address) {
+        // This is a direct buy, but we can reuse the place_order logic or make a simple buy script
+        // For simplicity, let's assume we use add_to_cart then immediately place_order, 
+        // OR we can create a direct_buy.php. Let's stick to the flow or provide instructions.
+        // Actually, your ERD has tblOrderHistory. Let's just post to a new script: buy_now.php
+        
+        String url = "http://10.0.2.2/cropcart/buy_now.php"; 
+        // Note: You'll need to create buy_now.php similar to place_order.php but for one item
+        
+        SharedPreferences sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        int userId = sharedPref.getInt("userId", -1);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    if (response.trim().equals("success")) {
+                        Toast.makeText(context, "Order Placed Successfully!", Toast.LENGTH_SHORT).show();
+                        context.startActivity(new Intent(context, OrderHistory.class));
+                    } else {
+                        Toast.makeText(context, "Error: " + response, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", String.valueOf(userId));
+                params.put("product_id", String.valueOf(product.getProductId()));
+                params.put("productName", product.getName());
+                params.put("category", product.getCategory());
+                params.put("Quantity", String.valueOf(quantity));
+                params.put("price", price.replace("₱", ""));
+                params.put("address", address);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(stringRequest);
     }
 }

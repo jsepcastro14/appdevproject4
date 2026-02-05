@@ -5,18 +5,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class Home extends AppCompatActivity {
 
@@ -31,24 +38,21 @@ public class Home extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
-        // UI Initialization
         recyclerView = findViewById(R.id.shoppingList);
-        mySpinner = findViewById(R.id.mySpinner); // Mula sa activity_home.xml
+        mySpinner = findViewById(R.id.mySpinner);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // 1. Setup Spinner Options
         String[] categories = {"All", "Vegetables", "Fruits"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categories);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mySpinner.setAdapter(spinnerAdapter);
 
-        // 2. Spinner Listener para sa Filtering
         mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedCategory = categories[position];
-                updateUI(selectedCategory); // Tawagin ang refresh na may filter
+                fetchProductsFromServer(selectedCategory);
             }
 
             @Override
@@ -56,7 +60,6 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        // Navigation Buttons
         setupNavigation();
     }
 
@@ -73,26 +76,28 @@ public class Home extends AppCompatActivity {
             startActivity(new Intent(Home.this, OrderHistory.class));
         });
 
+<<<<<<< HEAD
         findViewById(R.id.refreshbtn).setOnClickListener(v -> {
             updateUI(mySpinner.getSelectedItem().toString());
         });
 
         // Refresh button logic
         findViewById(R.id.refreshbtn).setOnClickListener(v -> updateUI(mySpinner.getSelectedItem().toString()));
+=======
+        findViewById(R.id.returnbtn).setOnClickListener(v -> fetchProductsFromServer(mySpinner.getSelectedItem().toString()));
+>>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // I-refresh ang listahan base sa kasalukuyang pili sa spinner
-        updateUI(mySpinner.getSelectedItem().toString());
+        fetchProductsFromServer(mySpinner.getSelectedItem().toString());
     }
 
-    // 3. Inayos na updateUI method
-    private void updateUI(String category) {
-        List<Product> allProducts = ProductManager.getAllProducts();
-        filteredList.clear();
+    private void fetchProductsFromServer(String category) {
+        String url = "http://10.0.2.2/cropcart/get_products.php";
 
+<<<<<<< HEAD
         for (Product p : allProducts) {
             // FILTER: Isama lang ang product kung ito ay AVAILABLE pa
             if (p.isAvailable()) {
@@ -106,5 +111,41 @@ public class Home extends AppCompatActivity {
 
         adapter = new ProductAdapter(filteredList);
         recyclerView.setAdapter(adapter);
+=======
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        filteredList.clear();
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            Product product = new Product(
+                                    jsonObject.getInt("product_id"),
+                                    jsonObject.getInt("user_id"),
+                                    jsonObject.getString("productName"),
+                                    jsonObject.getString("category"),
+                                    jsonObject.getString("Quantity") + " pcs",
+                                    "₱" + jsonObject.getString("price")
+                            );
+
+                            if (category.equals("All") || product.getCategory().equalsIgnoreCase(category)) {
+                                filteredList.add(product);
+                            }
+                        }
+
+                        adapter = new ProductAdapter(filteredList);
+                        recyclerView.setAdapter(adapter);
+
+                    } catch (JSONException e) {
+                        Toast.makeText(Home.this, "JSON Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(Home.this, "Network Error: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+>>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
     }
 }

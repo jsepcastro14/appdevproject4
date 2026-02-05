@@ -1,7 +1,8 @@
 package com.example.appdevproject2;
 
-import android.widget.Toast;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.Toast;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapter.ViewHolder> {
     private List<Product> historyList;
@@ -38,7 +44,6 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
         holder.tvPrice.setText(item.getPrice());
         holder.tvAddress.setText(item.getCategory());
 
-        // FIX: Ginagamit na ang tamang method at ipinapasa ang context
         holder.itemView.setOnClickListener(v -> {
             int currentPos = holder.getAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION) {
@@ -56,9 +61,7 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
         });
     }
 
-    // FIX: Dinagdagan ng Context at position parameters
     private void showRateDialog(Context context, Product product, int position) {
-        // Gumamit ng context mula sa View, hindi null!
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         View sheetView = LayoutInflater.from(context).inflate(R.layout.activity_rate_product, null);
 
@@ -71,21 +74,7 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
         btnRate.setOnClickListener(v -> {
             String rating = etRating.getText().toString();
             if (!rating.isEmpty()) {
-                String updatedDetails = product.getCategory() + " | Rate: " + rating + "/5";
-                Product ratedProduct = new Product(product.getName(), updatedDetails, product.getQuantity(), product.getPrice());
-
-                // I-save ang rated product
-                SuccessfulOrderManager.addOrder(ratedProduct);
-
-                // Alisin sa history list pagkatapos i-rate
-                if (position < historyList.size()) {
-                    historyList.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, historyList.size());
-                }
-
-                Toast.makeText(context, "Rated Successfully!", Toast.LENGTH_SHORT).show();
-                bottomSheetDialog.dismiss();
+                rateProductOnServer(context, product, rating, position, bottomSheetDialog);
             } else {
                 Toast.makeText(context, "Please enter a rating", Toast.LENGTH_SHORT).show();
             }
@@ -93,6 +82,41 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
 
         bottomSheetDialog.setContentView(sheetView);
         bottomSheetDialog.show();
+    }
+
+    private void rateProductOnServer(Context context, Product product, String rating, int position, BottomSheetDialog dialog) {
+        String url = "http://10.0.2.2/cropcart/rate_product.php";
+        SharedPreferences sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        int userId = sharedPref.getInt("userId", -1);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    if (response.trim().equals("success")) {
+                        Toast.makeText(context, "Rated Successfully!", Toast.LENGTH_SHORT).show();
+                        if (position < historyList.size()) {
+                            historyList.remove(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position, historyList.size());
+                        }
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(context, "Error: " + response, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", String.valueOf(userId));
+                params.put("product_id", String.valueOf(product.getProductId()));
+                params.put("productName", product.getName());
+                params.put("category", product.getCategory());
+                params.put("address", product.getCategory()); // Assuming address is in the category field for history
+                params.put("rate", rating);
+                return params;
+            }
+        };
+        Volley.newRequestQueue(context).add(stringRequest);
     }
 
     @Override

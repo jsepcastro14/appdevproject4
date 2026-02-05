@@ -40,4 +40,38 @@ public class RegisterActivity extends AppCompatActivity {
             finish();
         });
     }
+<<<<<<< HEAD
 }
+=======
+
+    private void registerUser(String firstName, String lastName, String email, String password, String mobileNum) {
+        String url = "http://10.0.2.2/cropcart/register.php";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    if (response.trim().equals("success")) {
+                        Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Registration failed: " + response, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(RegisterActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show()) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("firstName", firstName);
+                params.put("lastName", lastName);
+                params.put("email", email);
+                params.put("password", password);
+                params.put("mobileNo", mobileNum);
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+}
+>>>>>>> 6310549 (Connect app to XAMPP MySQL and implement ERD features)
