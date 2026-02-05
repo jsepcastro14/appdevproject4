@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 01, 2026 at 05:09 PM
+-- Generation Time: Feb 05, 2026 at 02:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,34 +24,34 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Table structure for table `tbluser`
 --
 
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `firstname` varchar(50) DEFAULT NULL,
-  `lastname` varchar(50) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `mobileNum` varchar(20) DEFAULT NULL
+CREATE TABLE `tbluser` (
+  `user_id` int(11) NOT NULL,
+  `firstName` varchar(50) NOT NULL,
+  `lastName` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `mobileNo` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- Dumping data for table `tbluser`
 --
 
-INSERT INTO `users` (`id`, `firstname`, `lastname`, `email`, `password`, `mobileNum`) VALUES
-(1, 'sean', 'del rosario', 'sean15@gmail.com', '1234567', '09765590309');
+INSERT INTO `tbluser` (`user_id`, `firstName`, `lastName`, `email`, `password`, `mobileNo`) VALUES
+(1, 'Sean', 'Rodejo', 'sean@gmail.com', '1234567', '09765590309');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `users`
+-- Indexes for table `tbluser`
 --
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
+ALTER TABLE `tbluser`
+  ADD PRIMARY KEY (`user_id`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
@@ -59,10 +59,10 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT for table `tbluser`
 --
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `tbluser`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

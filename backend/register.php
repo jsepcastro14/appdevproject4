@@ -1,14 +1,22 @@
-        <?php
-        require_once 'db_config.php';
-        $firstname = $_POST['firstname'];
-        $lastname = $_POST['lastname'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $mobileNum = $_POST['mobileNum'];
+<?php
+require_once 'db_config.php';
 
-        $sql = "INSERT INTO users (firstname, lastname, email, password, mobileNum) VALUES ('$firstname', '$lastname', '$email', '$password', '$mobileNum')";
-        if($conn->query($sql) === TRUE) echo "success";
-        else echo "error: " . $conn->error;
-        $conn->close();
-        ?>
-        
+// These must match the params.put() keys in RegisterActivity.java exactly
+$firstName = $_POST['firstName'];
+$lastName  = $_POST['lastName'];
+$email     = $_POST['email'];
+$password  = $_POST['password'];
+$mobileNo  = $_POST['mobileNo'];
+
+// Use the exact table name from your database (tbluser)
+$sql = "INSERT INTO tbluser (firstName, lastName, email, password, mobileNo) 
+        VALUES ('$firstName', '$lastName', '$email', '$password', '$mobileNo')";
+
+if($conn->query($sql) === TRUE) {
+    echo "success";
+} else {
+    // This helps you see the actual SQL error in the Android Toast
+    echo "error: " . $conn->error;
+}
+$conn->close();
+?>
