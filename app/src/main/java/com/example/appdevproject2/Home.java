@@ -72,8 +72,12 @@ public class Home extends AppCompatActivity {
             startActivity(new Intent(Home.this, OrderHistory.class));
         });
 
+        findViewById(R.id.refreshbtn).setOnClickListener(v -> {
+            updateUI(mySpinner.getSelectedItem().toString());
+        });
+
         // Refresh button logic
-        findViewById(R.id.returnbtn).setOnClickListener(v -> updateUI(mySpinner.getSelectedItem().toString()));
+        findViewById(R.id.refreshbtn).setOnClickListener(v -> updateUI(mySpinner.getSelectedItem().toString()));
     }
 
     @Override

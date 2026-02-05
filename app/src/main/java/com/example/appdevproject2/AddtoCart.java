@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -49,6 +50,13 @@ public class AddtoCart extends AppCompatActivity {
 
         CartProductAdapter adapter = new CartProductAdapter(CartManager.getCartItems());
         recyclerView.setAdapter(adapter);
+
+        ImageButton refreshBtn = findViewById(R.id.refreshbtn);
+        refreshBtn.setOnClickListener(v -> {
+            CartProductAdapter newAdapter = new CartProductAdapter(CartManager.getCartItems());
+            recyclerView.setAdapter(newAdapter);
+            Toast.makeText(this, "Cart refreshed", Toast.LENGTH_SHORT).show();
+        });
 
         // Return button logic
         checkoutBTN.setOnClickListener(v -> {

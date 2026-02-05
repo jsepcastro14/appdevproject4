@@ -2,6 +2,7 @@ package com.example.appdevproject2;
 
 import android.os.Bundle;
 import android.widget.ImageButton; // Siguraduhin na i-import ito
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,13 @@ public class OrderHistory extends AppCompatActivity {
 
         returnBtn.setOnClickListener(v -> {
             finish();
+        });
+
+        ImageButton refreshBtn = findViewById(R.id.refreshbtn);
+        refreshBtn.setOnClickListener(v -> {
+            OrderHistoryadapter newAdapter = new OrderHistoryadapter(OrderHistoryManager.getItems());
+            rv.setAdapter(newAdapter);
+            Toast.makeText(this, "Order history updated", Toast.LENGTH_SHORT).show();
         });
 
 

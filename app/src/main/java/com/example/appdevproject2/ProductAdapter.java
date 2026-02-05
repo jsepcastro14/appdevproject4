@@ -259,6 +259,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             Product soldProduct = new Product(currentProduct.getName(), address + " (" + paymentMethod + ")", "1 pcs", currentProduct.getPrice());
             OrderHistoryManager.addItem(soldProduct);
 
+            SuccessfulOrderManager.addOrder(currentProduct);
             paymentDialog.dismiss();
         });
         paymentDialog.setContentView(paymentView);

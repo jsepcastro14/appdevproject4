@@ -33,6 +33,20 @@
             android:contentDescription="Return"
             android:padding="12dp"
             android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/refreshbtn"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="77dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Refresh"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/refreshbtn" />
+
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -66,9 +80,10 @@
                         android:textSize="20sp" />
 
                     <TextView
+                        android:id="@+id/tvTotalProductsCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15"
+                        android:text="0"
                         android:textSize="30sp"
                         android:textStyle="bold"
                         android:layout_marginLeft="10dp"/>
@@ -81,9 +96,10 @@
                         android:textSize="20sp" />
 
                     <TextView
+                        android:id="@+id/tvSuccessfulOrdersCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5"
+                        android:text="0"
                         android:textSize="30sp"
                         android:textStyle="bold"
                         android:layout_marginLeft="10dp"/>
