@@ -120,11 +120,12 @@
                     android:textSize="17dp" />
 
                 <EditText
+                    android:id="@+id/editTextFirstName"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_marginRight="10dp"
-
                     android:layout_weight="1"
+                    android:hint="Enter first name"
                     android:inputType="textPersonName" />
             </LinearLayout>
 
@@ -142,12 +143,15 @@
                     android:textSize="17dp" />
 
                 <EditText
+                    android:id="@+id/editTextLastName"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
+                    android:hint="Enter last name"
                     android:inputType="text" />
             </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/LoginBTN"

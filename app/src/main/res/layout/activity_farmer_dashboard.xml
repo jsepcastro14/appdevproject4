@@ -34,18 +34,6 @@
             android:padding="12dp"
             android:scaleType="centerInside" />
 
-        <ImageButton
-            android:id="@+id/refreshbtn"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="77dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Refresh"
-            android:padding="12dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/refreshbtn" />
 
     </RelativeLayout>
 
@@ -141,7 +129,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="SUCCESSFUL ORDERS"
+                    android:text="RATED Products"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />

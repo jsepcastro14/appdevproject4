@@ -68,28 +68,28 @@
                     android:id="@+id/firstname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Philstrong"
+                    android:text="FirstName"
                     android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/lastname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pizzaras"
+                    android:text="LastName"
                     android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="philstrong@gmail"
+                    android:text="example@gmail.com"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/mobileNum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:text="09679514394"
                     android:textSize="16sp" />
 
             </LinearLayout>

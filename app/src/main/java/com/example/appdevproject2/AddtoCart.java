@@ -69,6 +69,7 @@ public class AddtoCart extends AppCompatActivity {
         findViewById(R.id.returnbtn).setOnClickListener(v -> finish());
     }
 
+    // Sa loob ng AddtoCart.java
     private void fetchCartFromServer() {
         SharedPreferences sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         int userId = sharedPref.getInt("userId", -1);
@@ -80,19 +81,26 @@ public class AddtoCart extends AppCompatActivity {
                         cartList.clear();
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject obj = response.getJSONObject(i);
+
+                            // --- UPDATED CONSTRUCTOR ---
+                            // Siguraduhing ang get_cart.php mo ay naglalabas ng "cart_id"
                             cartList.add(new Product(
+                                    obj.getInt("cart_id"), // 1. Dito natin ilalagay ang cart_id
                                     obj.getInt("product_id"),
                                     obj.getInt("user_id"),
                                     obj.getString("productName"),
                                     obj.getString("category"),
                                     obj.getString("Quantity") + " pcs",
-                                    "₱" + obj.getString("price")
+                                    "₱" + obj.getString("price"),
+                                    0 // imageResourceId (default/no image)
                             ));
                         }
+                        // Gagamitin na natin ang CartProductAdapter na in-update
                         adapter = new CartProductAdapter(cartList);
                         recyclerView.setAdapter(adapter);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Toast.makeText(this, "JSON Parsing Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> Toast.makeText(this, "Error fetching cart", Toast.LENGTH_SHORT).show()
@@ -100,6 +108,7 @@ public class AddtoCart extends AppCompatActivity {
 
         Volley.newRequestQueue(this).add(request);
     }
+
 
     private void showPaymentMethodDialog(Context context, String totalAmount) {
         BottomSheetDialog paymentDialog = new BottomSheetDialog(context);
@@ -138,7 +147,7 @@ public class AddtoCart extends AppCompatActivity {
     }
 
     private void placeOrderOnServer(Context context, String address, BottomSheetDialog dialog) {
-        String url = "http://10.0.2.2/cropcart/place_order.php";
+        String url = "http://10.0.2.2/cropcart/place_order_from_cart.php";
         SharedPreferences sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         int userId = sharedPref.getInt("userId", -1);
 
@@ -146,18 +155,20 @@ public class AddtoCart extends AppCompatActivity {
                 response -> {
                     if (response.trim().equals("success")) {
                         Toast.makeText(context, "Order Placed Successfully!", Toast.LENGTH_SHORT).show();
-                        cartList.clear();
-                        if (adapter != null) {
-                            adapter.notifyDataSetChanged();
-                        }
                         dialog.dismiss();
-                        startActivity(new Intent(AddtoCart.this, OrderHistory.class));
-                        finish();
+
+                        // Mag-redirect sa Home.java at i-clear ang back stack
+                        // para ma-refresh ang product list.
+                        Intent intent = new Intent(AddtoCart.this, Home.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish(); // Isara ang AddtoCart activity
+
                     } else {
-                        Toast.makeText(context, "Error: " + response, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Checkout Error: " + response, Toast.LENGTH_LONG).show();
                     }
                 },
-                error -> Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()) {
+                error -> Toast.makeText(context, "Network Error on checkout", Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();

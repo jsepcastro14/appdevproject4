@@ -37,9 +37,7 @@ public class OrderHistory extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         findViewById(R.id.returnbtn).setOnClickListener(v -> finish());
-        
-        // Corrected ID: refreshbtn (lowercase) matching your XML
-        findViewById(R.id.refreshbtn).setOnClickListener(v -> fetchOrderHistory());
+
 
         fetchOrderHistory();
     }
@@ -61,15 +59,19 @@ public class OrderHistory extends AppCompatActivity {
                         historyList.clear();
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject obj = response.getJSONObject(i);
-                            
-                            // Map database columns to Product object
+
+                            // Kunin ang totoong primary key mula sa database
+                            int actualOrderId = obj.getInt("order_history_id");
+
                             Product p = new Product(
-                                    obj.getInt("product_id"),
-                                    obj.getInt("user_id"),
-                                    obj.getString("productName"),
-                                    obj.getString("address"), // We show address in the category field for history
-                                    obj.getString("Quantity") + " pcs",
-                                    "₱" + obj.getString("price")
+                                    actualOrderId,                      // 1. order_history_id
+                                    obj.getInt("product_id"),           // 2. productId
+                                    obj.getInt("user_id"),              // 3. userId
+                                    obj.getString("productName"),       // 4. name
+                                    obj.getString("address"),           // 5. address/category
+                                    obj.getString("Quantity") + " pcs", // 6. quantity
+                                    "₱" + obj.getString("price"),       // 7. price
+                                    0                                   // 8. imageResourceId
                             );
                             historyList.add(p);
                         }

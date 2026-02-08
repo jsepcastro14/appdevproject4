@@ -53,11 +53,6 @@ public class FarmerDashboard extends AppCompatActivity {
         });
 
         // Refresh button logic
-        ImageButton refreshBtn = findViewById(R.id.refreshbtn);
-        refreshBtn.setOnClickListener(v -> {
-            fetchSuccessfulOrders();
-            Toast.makeText(this, "Dashboard updated", Toast.LENGTH_SHORT).show();
-        });
 
         findViewById(R.id.returnbtn).setOnClickListener(v -> finish());
     }
@@ -71,29 +66,31 @@ public class FarmerDashboard extends AppCompatActivity {
                         successfulOrdersList.clear();
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject obj = response.getJSONObject(i);
-                            
-                            // Map database columns to Product object
+
+                            // --- UPDATED PRODUCT CONSTRUCTOR ---
+                            // Siguraduhing may "rate_id" kang sinasama sa JSON response ng get_successful_orders.php
                             Product p = new Product(
-                                    obj.getInt("product_id"),
-                                    obj.getInt("user_id"),
-                                    obj.getString("productName"),
-                                    "Rate: " + obj.getString("rate") + "/5",
-                                    obj.getString("address"), 
-                                    "Confirmed" 
+                                    obj.getInt("rate_id"),    // 1. orderId (Gagamitin para sa rate_id)
+                                    obj.getInt("product_id"),   // 2. productId
+                                    obj.getInt("user_id"),      // 3. userId
+                                    obj.getString("productName"), // 4. name
+                                    "Rate: " + obj.getString("rate") + "/5", // 5. category (ginamit mo rito ang rate)
+                                    obj.getString("address"),   // 6. quantity (ginamit mo rito ang address)
+                                    "Confirmed",                // 7. price (ginamit mo rito ang status)
+                                    0                           // 8. imageResourceId (default/no image)
                             );
                             successfulOrdersList.add(p);
                         }
                         adapter = new SuccesfulOrdersAdapter(successfulOrdersList);
                         recyclerView.setAdapter(adapter);
 
-                        // Update counters based on fetched data
                         if (tvSuccessfulOrders != null) {
                             tvSuccessfulOrders.setText(String.valueOf(successfulOrdersList.size()));
                         }
-                        // Note: Total products counter would ideally need another fetch from tblproduct
-                        
+
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Toast.makeText(this, "JSON Parsing Error!", Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> Toast.makeText(this, "Error fetching successful orders", Toast.LENGTH_SHORT).show()

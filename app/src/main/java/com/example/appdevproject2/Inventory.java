@@ -37,13 +37,8 @@ public class Inventory extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         findViewById(R.id.returnbtn).setOnClickListener(v -> finish());
-        
-        // Refresh button logic
-        ImageButton refreshBtn = findViewById(R.id.refreshbtn);
-        refreshBtn.setOnClickListener(v -> {
-            fetchInventory();
-            Toast.makeText(this, "Inventory updated", Toast.LENGTH_SHORT).show();
-        });
+
+
 
         fetchInventory();
     }
@@ -51,7 +46,7 @@ public class Inventory extends AppCompatActivity {
     private void fetchInventory() {
         SharedPreferences sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         int userId = sharedPref.getInt("userId", -1);
-        
+
         if (userId == -1) {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
             return;
@@ -63,23 +58,26 @@ public class Inventory extends AppCompatActivity {
                 response -> {
                     try {
                         inventoryList.clear();
+                        // Sa loob ng fetchInventory() method sa Inventory.java
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject obj = response.getJSONObject(i);
-                            
+
+                            // Kumpunihin ang Product object
                             Product p = new Product(
-                                    obj.getInt("product_id"),
-                                    obj.getInt("user_id"),
-                                    obj.getString("productName"),
-                                    obj.getString("category"),
-                                    obj.getString("Quantity") + " pcs",
-                                    "₱" + obj.getString("price")
+                                    obj.getInt("product_id"),           // 1. Dito ilagay ang ID na gagamitin sa delete (product_id)
+                                    obj.getInt("product_id"),           // 2. productId
+                                    obj.getInt("user_id"),              // 3. userId
+                                    obj.getString("productName"),       // 4. name
+                                    obj.getString("category"),          // 5. category
+                                    obj.getString("Quantity") + " pcs", // 6. quantity
+                                    "₱" + obj.getString("price"),       // 7. price
+                                    0                                   // 8. imageResourceId
                             );
                             inventoryList.add(p);
                         }
                         adapter = new InventoryAdapter(inventoryList);
                         recyclerView.setAdapter(adapter);
                     } catch (JSONException e) {
-                        e.printStackTrace();
                     }
                 },
                 error -> Toast.makeText(this, "Error fetching inventory", Toast.LENGTH_SHORT).show()

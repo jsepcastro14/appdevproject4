@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.widget.ImageView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -38,11 +38,13 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product item = historyList.get(position);
-
         holder.tvName.setText(item.getName());
         holder.tvQty.setText(item.getQuantity());
         holder.tvPrice.setText(item.getPrice());
         holder.tvAddress.setText(item.getCategory());
+        holder.image.setImageResource(item.getImageResourceId());
+
+
 
         holder.itemView.setOnClickListener(v -> {
             int currentPos = holder.getAdapterPosition();
@@ -51,15 +53,17 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
             }
         });
 
+        // Sa loob ng onBindViewHolder:
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
-            if (pos != RecyclerView.NO_POSITION) {
-                historyList.remove(pos);
-                notifyItemRemoved(pos);
-                notifyItemRangeChanged(pos, historyList.size());
+            int currentPos = holder.getAdapterPosition();
+            if (currentPos != RecyclerView.NO_POSITION) {
+                // Ito ay tatawag sa getOrderId() na naglalaman na ng order_history_id
+                int orderIdToDelete = item.getOrderId();
+                deleteOrderFromServer(v.getContext(), orderIdToDelete, currentPos);
             }
         });
     }
+
 
     private void showRateDialog(Context context, Product product, int position) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
@@ -119,6 +123,47 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
         Volley.newRequestQueue(context).add(stringRequest);
     }
 
+    // Idagdag itong bagong method sa loob ng OrderHistoryadapter class
+    private void deleteOrderFromServer(Context context, int orderId, int position) {
+        String url = "http://10.0.2.2/cropcart/delete_order.php"; // Siguraduhing tama ang URL
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    // I-check kung ang tugon mula sa server ay "success"
+                    if (response.trim().equalsIgnoreCase("success")) {
+                        Toast.makeText(context, "Order deleted successfully!", Toast.LENGTH_SHORT).show();
+
+                        // Tanggalin ang item sa listahan at i-update ang RecyclerView
+                        // Siguraduhing may laman pa rin ang list bago mag-remove
+                        if (position < historyList.size()) {
+                            historyList.remove(position);
+                            notifyItemRemoved(position);
+                            // Mahalaga ito para ma-update ang positions ng ibang items
+                            notifyItemRangeChanged(position, historyList.size());
+                        }
+                    } else {
+                        // Kung may error na nireturn ang PHP script
+                        Toast.makeText(context, "Failed to delete: " + response, Toast.LENGTH_LONG).show();
+                    }
+                },
+                error -> {
+                    // Para sa network errors (hal. walang internet, maling URL)
+                    Toast.makeText(context, "Network Error: Could not connect to server.", Toast.LENGTH_LONG).show();
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                // Ipadala ang order_id sa PHP script
+                params.put("order_id", String.valueOf(orderId));
+                return params;
+            }
+        };
+
+        // Idagdag ang request sa Volley queue
+        Volley.newRequestQueue(context).add(stringRequest);
+    }
+
+
     @Override
     public int getItemCount() {
         return historyList.size();
@@ -127,9 +172,11 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvQty, tvPrice, tvAddress;
         Button btnDelete;
+        ImageView image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            image = itemView.findViewById(R.id.product_image);
             tvName = itemView.findViewById(R.id.product_name);
             tvQty = itemView.findViewById(R.id.product_quantity);
             tvPrice = itemView.findViewById(R.id.product_price);

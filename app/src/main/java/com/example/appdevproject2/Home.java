@@ -76,8 +76,7 @@ public class Home extends AppCompatActivity {
             startActivity(new Intent(Home.this, OrderHistory.class));
         });
 
-        // Corrected ID to match activity_home.xml
-        findViewById(R.id.refreshbtn).setOnClickListener(v -> fetchProductsFromServer(mySpinner.getSelectedItem().toString()));
+
     }
 
     @Override
@@ -85,6 +84,8 @@ public class Home extends AppCompatActivity {
         super.onResume();
         fetchProductsFromServer(mySpinner.getSelectedItem().toString());
     }
+
+    // File: Home.java
 
     private void fetchProductsFromServer(String category) {
         String url = "http://10.0.2.2/cropcart/get_products.php";
@@ -97,14 +98,26 @@ public class Home extends AppCompatActivity {
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String productCategory = jsonObject.getString("category");
+
+                            int imageResId;
+                            if (productCategory.equalsIgnoreCase("Fruits")) {
+                                imageResId = R.drawable.fruits;
+                            } else if (productCategory.equalsIgnoreCase("Vegetables")) {
+                                imageResId = R.drawable.vegetables;
+                            } else {
+                                imageResId = R.drawable.emptyimage;
+                            }
 
                             Product product = new Product(
+                                    0,
                                     jsonObject.getInt("product_id"),
-                                    jsonObject.getInt("user_id"),
+                                    jsonObject.getInt("user_id"), // Siguraduhing nake-fetch mo ito mula sa DB
                                     jsonObject.getString("productName"),
-                                    jsonObject.getString("category"),
+                                    productCategory,
                                     jsonObject.getString("Quantity") + " pcs",
-                                    "₱" + jsonObject.getString("price")
+                                    "₱" + jsonObject.getString("price"),
+                                    imageResId
                             );
 
                             if (category.equals("All") || product.getCategory().equalsIgnoreCase(category)) {
@@ -112,7 +125,9 @@ public class Home extends AppCompatActivity {
                             }
                         }
 
-                        adapter = new ProductAdapter(filteredList);
+                        // --- UPDATED ADAPTER INITIALIZATION ---
+                        // Ipasa ang 'this' (context) sa constructor
+                        adapter = new ProductAdapter(Home.this, filteredList);
                         recyclerView.setAdapter(adapter);
 
                     } catch (JSONException e) {
@@ -124,4 +139,5 @@ public class Home extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
+
 }

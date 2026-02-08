@@ -52,6 +52,8 @@ public class addProduct extends AppCompatActivity {
                 Toast.makeText(this, "Please fill in all details", Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     private void addProductToServer(String name, String category, String qty, String price) {
