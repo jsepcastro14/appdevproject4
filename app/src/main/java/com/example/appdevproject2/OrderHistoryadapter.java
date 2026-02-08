@@ -44,6 +44,17 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
         holder.tvAddress.setText(item.getCategory());
         holder.image.setImageResource(item.getImageResourceId());
 
+        // --- ITO ANG IDINAGDAG NA LOGIC PARA SA IMAGE ---
+        String category = item.getCategory().toLowerCase(); // Gawing lowercase para mas madali i-check
+        if (category.contains("fruits")) {
+            holder.image.setImageResource(R.drawable.fruits);
+        } else if (category.contains("vegetables")) {
+            holder.image.setImageResource(R.drawable.vegetables);
+        } else {
+             // no image
+        }
+        // --- END OF ADDED LOGIC ---
+
 
 
         holder.itemView.setOnClickListener(v -> {
@@ -182,6 +193,7 @@ public class OrderHistoryadapter extends RecyclerView.Adapter<OrderHistoryadapte
             tvPrice = itemView.findViewById(R.id.product_price);
             tvAddress = itemView.findViewById(R.id.addresstext);
             btnDelete = itemView.findViewById(R.id.add_to_cart_button);
+
         }
     }
 }

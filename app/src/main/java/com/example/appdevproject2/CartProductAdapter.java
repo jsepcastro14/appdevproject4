@@ -40,6 +40,14 @@ public class CartProductAdapter extends RecyclerView.Adapter<CartProductAdapter.
         holder.quantity.setText(product.getQuantity());
         holder.price.setText(product.getPrice());
         // holder.image.setImageResource(product.getImageResourceId()); // Uncomment kung may image
+        String category = product.getCategory().toLowerCase();
+        if (category.contains("fruits")) {
+            holder.image.setImageResource(R.drawable.fruits);
+        } else if (category.contains("vegetables")) {
+            holder.image.setImageResource(R.drawable.vegetables);
+        } else {
+            holder.image.setImageResource(R.drawable.emptyimage); // Fallback image
+        }
 
         // --- UPDATED DELETE BUTTON LOGIC ---
         holder.btnDelete.setOnClickListener(v -> {

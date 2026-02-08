@@ -5,6 +5,7 @@ public class Product {
     private int productId;
     private int userId;
     private String name, category, quantity, price;
+
     private boolean isAvailable = true;
     private int imageResourceId; // <-- BAGONG FIELD NA IDINAGDAG
 
@@ -55,4 +56,5 @@ public class Product {
     public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
+
 }

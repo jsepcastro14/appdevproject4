@@ -41,7 +41,17 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         holder.tvName.setText(item.getName());
         holder.tvQty.setText(item.getQuantity());
         holder.tvPrice.setText(item.getPrice());
-        holder.tvAddress.setText("Address: " + item.getCategory());
+        holder.tvAddress.setText("Category: " + item.getCategory());
+
+        String category = item.getCategory().toLowerCase();
+        if (category.contains("fruits")) {
+            holder.image.setImageResource(R.drawable.fruits);
+        } else if (category.contains("vegetables")) {
+            holder.image.setImageResource(R.drawable.vegetables);
+        } else {
+            holder.image.setImageResource(R.drawable.emptyimage); // Fallback image
+        }
+
 
         // --- UPDATED DELETE BUTTON LOGIC ---
         holder.btnDelete.setOnClickListener(v -> {

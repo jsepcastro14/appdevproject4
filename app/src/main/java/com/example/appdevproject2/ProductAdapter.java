@@ -53,12 +53,34 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.price.setText(product.getPrice());
         holder.image.setImageResource(product.getImageResourceId());
 
+        // Logic para sa sariling produkto
         if (product.getUserId() == currentUserId) {
             holder.itemView.setClickable(false);
             holder.itemView.setOnClickListener(null);
             holder.name.setText(product.getName() + " (Your own product)");
             holder.itemView.setAlpha(0.6f);
+
+            // Ipakita ang Edit button dahil sa user ito
+            holder.btnEdit.setVisibility(View.VISIBLE);
+
+            // FUNCTION NG EDIT BUTTON
+            holder.btnEdit.setOnClickListener(v -> {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, EditProduct.class);
+
+                // Ipasa ang mga detalye ng produkto para may laman ang Edit Screen
+                intent.putExtra("PRODUCT_ID", product.getProductId());
+                intent.putExtra("PRODUCT_NAME", product.getName());
+                intent.putExtra("PRODUCT_CATEGORY", product.getCategory());
+                intent.putExtra("PRODUCT_QUANTITY", product.getQuantity());
+                intent.putExtra("PRODUCT_PRICE", product.getPrice());
+
+                context.startActivity(intent);
+            });
+
         } else {
+            // Kapag hindi sa user, itago ang Edit button at payagan ang pagbili
+            holder.btnEdit.setVisibility(View.GONE);
             holder.itemView.setClickable(true);
             holder.itemView.setAlpha(1.0f);
             holder.name.setText(product.getName());
@@ -66,6 +88,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 showPurchaseDialog(v.getContext(), product, holder.getAdapterPosition());
             });
         }
+
         holder.btnDelete.setVisibility(View.GONE);
     }
 
@@ -144,6 +167,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             String finalPrice = String.format("₱%.2f", total);
             showPaymentMethodDialog(context, finalPrice, product, count[0], position);
         });
+
+
 
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
@@ -255,6 +280,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView name, category, quantity, price, btnDelete;
         ImageView image;
+        Button btnEdit; // Idagdag ang Button object dito
+
         public ViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.product_image);
@@ -263,6 +290,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             quantity = itemView.findViewById(R.id.product_quantity);
             price = itemView.findViewById(R.id.product_price);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+            btnEdit = itemView.findViewById(R.id.btnEdit); // I-link sa ID mula sa shoppinglist.xml
         }
     }
 }

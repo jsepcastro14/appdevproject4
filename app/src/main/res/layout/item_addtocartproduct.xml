@@ -13,7 +13,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/emptyimage" /> <!-- Placeholder -->
+        android:src="@drawable/fruits" /> <!-- Placeholder -->
     <!-- WAKAS NG PAGBABAGO -->
 
     <LinearLayout
